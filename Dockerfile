@@ -8,15 +8,19 @@ ARG OVERLAY_WS=/opt/ros/overlay_ws
 # multi-stage for caching
 FROM $FROM_IMAGE AS cacher
 
-# clone overlay source
+# install turtlebot packages
 ARG OVERLAY_WS
 WORKDIR $OVERLAY_WS/src
 RUN echo "\
 repositories: \n\
-  ros2/demos: \n\
+  ROBOTIS-GIT/turtlebot3: \n\
     type: git \n\
-    url: https://github.com/ros2/demos.git \n\
-    version: ${ROS_DISTRO} \n\
+    url: https://github.com/ROBOTIS-GIT/turtlebot3.git \n\
+    version: ros2 \n\
+  ROBOTIS-GIT/turtlebot3_simulations: \n\
+    type: git \n\
+    url: https://github.com/ROBOTIS-GIT/turtlebot3_simulations.git \n\
+    version: ros2 \n\
 " > ../overlay.repos
 RUN vcs import ./ < ../overlay.repos
 
@@ -36,10 +40,9 @@ ARG OVERLAY_WS
 WORKDIR $OVERLAY_WS
 COPY --from=cacher /tmp/$OVERLAY_WS/src ./src
 RUN . /opt/ros/$ROS_DISTRO/setup.sh && \
-    apt-get update && rosdep install -y \
+    apt-get update && DEBIAN_FRONTEND=noninteractive rosdep install -y \
       --from-paths \
-        src/ros2/demos/demo_nodes_cpp \
-        src/ros2/demos/demo_nodes_py \
+        src/ROBOTIS-GIT \
       --ignore-src \
     && rm -rf /var/lib/apt/lists/*
 
@@ -47,11 +50,7 @@ RUN . /opt/ros/$ROS_DISTRO/setup.sh && \
 COPY --from=cacher $OVERLAY_WS/src ./src
 ARG OVERLAY_MIXINS="release"
 RUN . /opt/ros/$ROS_DISTRO/setup.sh && \
-    colcon build \
-      --packages-select \
-        demo_nodes_cpp \
-        demo_nodes_py \
-      --mixin $OVERLAY_MIXINS
+     colcon build
 
 # source entrypoint setup
 ENV OVERLAY_WS $OVERLAY_WS
@@ -59,18 +58,19 @@ RUN sed --in-place --expression \
       '$isource "$OVERLAY_WS/install/setup.bash"' \
       /ros_entrypoint.sh
 
+# Ensure setup scripts are sourced every time a new shell is opened
+RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> ~/.bashrc
+RUN echo "source $OVERLAY_WS/install/setup.bash" >> ~/.bashrc
+RUN echo "export GAZEBO_MODEL_PATH=\$GAZEBO_MODEL_PATH:$OVERLAY_WS/src/ROBOTIS-GIT/turtlebot3_simulations/turtlebot3_gazebo/models" >> ~/.bashrc
+
 # Install some useful tools
 RUN apt-get update && apt-get install -y \
                                          tmux \
                                          curl
 
 # Add a nice default .tmuxrc
-WORKDIR /root
+RUN cd ~
 RUN git clone https://github.com/gpakosz/.tmux.git
 RUN ln -s -f .tmux/.tmux.conf
 RUN cp .tmux/.tmux.conf.local .
 RUN sed -i '/#set -g mouse on/c\set -g mouse on' .tmux.conf.local
-WORKDIR $OVERLAY_WS
-
-# run launch file
-#CMD ["ros2", "launch", "demo_nodes_cpp", "talker_listener.launch.py"]

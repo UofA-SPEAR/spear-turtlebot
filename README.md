@@ -13,3 +13,9 @@ Run docker container:
 ```bash
 docker-compose run spear-turtlebot
 ```
+
+Launch turtlebot in gazebo:
+```bash
+export TURTLEBOT3_MODEL=waffle
+ros2 launch turtlebot3_gazebo empty_world.launch.py
+```
