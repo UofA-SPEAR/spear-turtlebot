@@ -66,7 +66,29 @@ RUN echo "export GAZEBO_MODEL_PATH=\$GAZEBO_MODEL_PATH:$OVERLAY_WS/src/ROBOTIS-G
 # Install some useful tools
 RUN apt-get update && apt-get install -y \
                                          tmux \
-                                         curl
+                                         curl \
+                                         vim \
+                                         # gzweb dependencies
+                                         libjansson-dev \
+                                         nodejs \
+                                         npm \
+                                         #nodejs-legacy \
+                                         libboost-dev \
+                                         imagemagick \
+                                         libtinyxml-dev \
+                                         mercurial \
+                                         cmake \
+                                         build-essential
+
+# Build gzweb
+# Note: this checks out our fork which has a patch to make gzweb build
+# against gazebo11.
+# See https://github.com/osrf/gzweb/issues/184
+RUN cd ~ && git clone https://github.com/UofA-SPEAR/gzweb.git \
+    && cd ~/gzweb \
+    && git checkout gazebo11 \
+    && . /usr/share/gazebo/setup.sh \
+    && ./deploy.sh -m
 
 # Add a nice default .tmuxrc
 RUN cd ~
