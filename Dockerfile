@@ -50,7 +50,7 @@ RUN . /opt/ros/$ROS_DISTRO/setup.sh && \
 COPY --from=cacher $OVERLAY_WS/src ./src
 ARG OVERLAY_MIXINS="release"
 RUN . /opt/ros/$ROS_DISTRO/setup.sh && \
-     colcon build
+     colcon build --symlink-install
 
 # source entrypoint setup
 ENV OVERLAY_WS $OVERLAY_WS
