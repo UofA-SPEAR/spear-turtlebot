@@ -19,9 +19,11 @@ Also refer to the "Further Resources" section at the bottom of this page if you 
 
 Follow the installation instructions [here](https://github.com/UofA-SPEAR/spear-turtlebot/blob/master/README.md).
 
-## 2. Start following the activities
+## 2. Start following along with the activities
 
-TODO
+- [Creating ROS Publisher and Subscriber Nodes](https://github.com/UofA-SPEAR/spear-turtlebot/blob/master/new-member-activity/publisher-subscriber.md)
+
+More activities coming soon!
 
 ## Further Resources
 

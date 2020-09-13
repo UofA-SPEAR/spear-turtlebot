@@ -30,3 +30,5 @@ Inside the docker container, you can launch a gazebo simulation as follows:
 export TURTLEBOT3_MODEL=waffle
 ros2 launch turtlebot3_gazebo empty_world.launch.py
 ```
+
+Note that you can edit files on the host system and they will be updated in the docker container.
