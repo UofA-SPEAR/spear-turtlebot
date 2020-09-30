@@ -22,6 +22,7 @@ Follow the installation instructions [here](https://github.com/UofA-SPEAR/spear-
 ## 2. Start following along with the activities
 
 - [Creating ROS Publisher and Subscriber Nodes](https://github.com/UofA-SPEAR/spear-turtlebot/blob/master/new-member-activity/publisher-subscriber.md)
+- [Creating a GitHub pull request](https://github.com/UofA-SPEAR/spear-turtlebot/blob/master/new-member-activity/git.md)
 
 More activities coming soon!
 
